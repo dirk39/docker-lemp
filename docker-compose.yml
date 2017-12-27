@@ -1,0 +1,44 @@
+version: "2.0"
+
+services:
+  db:
+      image: percona:5.7.11
+      ports:
+          - 3306:3306
+      environment:
+          MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+      volumes:
+          - ./percona/data:/var/lib/mysql:delegated
+          - ./percona/conf.d:/etc/mysql/conf.d
+      networks:
+          - internal
+  php-fpm:
+      build: php-fpm
+      ports:
+          - 9000:9000
+      volumes:
+          - ${DIR}:/var/www
+          - ./php-fpm/php.ini:/usr/local/etc/php/conf.d/php.ini
+      networks:
+          - internal
+      working_dir: /var/www
+  nginx:
+      image: nginx
+      volumes:
+         - ./nginx/conf.d:/etc/nginx/conf.d
+      ports:
+          - 80:80
+      networks:
+          - internal
+  phpmyadmin:
+      image: phpmyadmin/phpmyadmin
+      environment:
+        PMA_ARBITRARY: 1
+        PMA_HOST: db
+        PMA_USER: root
+      ports:
+          - 8080:80
+      networks:
+          - internal        
+networks:
+     internal:
