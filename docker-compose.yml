@@ -13,12 +13,14 @@ services:
       networks:
           - internal
   php-fpm:
-      build: php-fpm
+      build: 
+        context: ./php56-fpm
+      image: php56-fpm:latest
       ports:
           - 9000:9000
       volumes:
           - ${DIR}:/var/www
-          - ./php-fpm/php.ini:/usr/local/etc/php/conf.d/php.ini
+          - ./php56-fpm/php.ini:/usr/local/etc/php/conf.d/php.ini
       networks:
           - internal
       working_dir: /var/www
